@@ -28,4 +28,9 @@ public class Post {
         this.title = title;
         this.content = content;
     }
+//
+//    public String getTitle(){
+//        //절대 서비스에 정책을 넣지 않을것!!
+//        return title.substring(0,10);
+//    }
 }
