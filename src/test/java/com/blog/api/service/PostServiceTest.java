@@ -3,6 +3,7 @@ package com.blog.api.service;
 import com.blog.api.domain.Post;
 import com.blog.api.repository.PostRepository;
 import com.blog.api.request.PostCreate;
+import com.blog.api.request.PostSearch;
 import com.blog.api.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class PostServiceTest {
@@ -72,21 +75,32 @@ class PostServiceTest {
     @DisplayName("글 여러개 조회")
     void test3(){
         //given
-        postRepository.saveAll(List.of(
-                Post.builder()
-                        .title("foo1")
-                        .content("bar1")
-                        .build(),
-                Post.builder()
-                        .title("foo2")
-                        .content("bar2")
-                        .build()
-        ));
+        List<Post> requestPosts = IntStream.range(0,20)
+                        .mapToObj(i->
+                            Post.builder()
+                                    .title("제목"+i)
+                                    .content("컨텐츠" + i)
+                                    .build()
+                        ).toList();
+        postRepository.saveAll(requestPosts);
+
         //when
-        List<PostResponse> posts = postService.getList();
+
+        PostSearch postSearch = PostSearch.builder()
+                .page(1)
+//                .size(10)
+                .build();
+
+        List<PostResponse> posts = postService.getList(postSearch);
+
+        for (PostResponse post : posts) {
+            System.out.println("post.getId() = " + post.getId());
+        }
 
         //then
-        assertEquals(2L, posts.size());
+        assertEquals(10L, posts.size());
+        assertEquals("제목19",posts.get(0).getTitle());
+//        assertEquals("컨텐츠15",posts.get(4).getContent());
     }
 
 

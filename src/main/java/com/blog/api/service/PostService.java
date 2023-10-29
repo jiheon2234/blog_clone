@@ -3,6 +3,7 @@ package com.blog.api.service;
 import com.blog.api.domain.Post;
 import com.blog.api.repository.PostRepository;
 import com.blog.api.request.PostCreate;
+import com.blog.api.request.PostSearch;
 import com.blog.api.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +42,10 @@ public class PostService {
     }
 
 
-    public List<PostResponse> getList() {
-        return postRepository.findAll()
-                .stream().map(PostResponse::new)
+    public List<PostResponse> getList(PostSearch postSearch) {
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC,"id"));
+        return postRepository.getList(postSearch).stream()
+                .map(PostResponse::new)
                 .collect(toList());
     }
 }

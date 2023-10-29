@@ -31,8 +31,22 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//querydsl
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	implementation('com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0') // 로그 남기기
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+clean{ //자동 생성된 Q클래스 제거
+	delete file('src/main/generated')
+}
+
+

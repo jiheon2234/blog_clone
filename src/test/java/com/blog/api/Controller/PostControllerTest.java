@@ -4,7 +4,6 @@ import com.blog.api.domain.Post;
 import com.blog.api.repository.PostRepository;
 import com.blog.api.request.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -136,28 +137,44 @@ class PostControllerTest {
     @DisplayName("글 여러개 조회")
     void test5() throws Exception {
         //given
-        Post post1 = Post.builder()
-                .title("title_1")
-                .content("content_1")
-                .build();
-
-        Post post2 = Post.builder()
-                .title("title_2")
-                .content("content_2")
-                .build();
-        postRepository.saveAll(List.of(post1,post2));
+        List<Post> requestPosts = IntStream.range(1, 31)
+                .mapToObj(
+                        i -> Post.builder()
+                                .title("제목" + i)
+                                .content("내용" + i)
+                                .build()
+                ).toList();
+        postRepository.saveAll(requestPosts);
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=1&size=10")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", Matchers.is(2)))
-                .andExpect(jsonPath("$[0].id").value(post1.getId()))
-                .andExpect(jsonPath("$[0].title").value("title_1"))
-                .andExpect(jsonPath("$[0].content").value("content_1"))
-                .andExpect(jsonPath("$.length()", Matchers.is(2)))
-                .andExpect(jsonPath("$[1].id").value(post2.getId()))
-                .andExpect(jsonPath("$[1].title").value("title_2"))
-                .andExpect(jsonPath("$[1].content").value("content_2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].title").value("제목20"))
+                .andExpect(jsonPath("$[0].content").value("내용20"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("페이지를 0으로 요청하면 첫 페이지를 가져온다")
+    void test6() throws Exception {
+        //given
+        List<Post> requestPosts = IntStream.range(0, 20)
+                .mapToObj(
+                        i -> Post.builder()
+                                .title("제목" + i)
+                                .content("내용" + i)
+                                .build()
+                ).toList();
+        postRepository.saveAll(requestPosts);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=0&size=10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("제목9"))
+                .andExpect(jsonPath("$[0].content").value("내용9"))
                 .andDo(print());
     }
 
