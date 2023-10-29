@@ -28,6 +28,23 @@ public class Post {
         this.title = title;
         this.content = content;
     }
+
+    public void change(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
+
+    public PostEditor.PostEditorBuilder toEditor(){
+         return PostEditor.builder()
+                 .title(title)
+                 .content(content);
+    }
+
+    public void edit(PostEditor postEditor) {
+        this.title = postEditor.getTitle();
+        this.content = postEditor.getContent();
+    }
+
 //
 //    public String getTitle(){
 //        //절대 서비스에 정책을 넣지 않을것!!

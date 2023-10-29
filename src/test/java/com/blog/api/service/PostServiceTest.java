@@ -3,6 +3,7 @@ package com.blog.api.service;
 import com.blog.api.domain.Post;
 import com.blog.api.repository.PostRepository;
 import com.blog.api.request.PostCreate;
+import com.blog.api.request.PostEdit;
 import com.blog.api.request.PostSearch;
 import com.blog.api.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
@@ -102,6 +103,52 @@ class PostServiceTest {
         assertEquals("제목19",posts.get(0).getTitle());
 //        assertEquals("컨텐츠15",posts.get(4).getContent());
     }
+
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void test4(){
+        //given
+        Post post = Post.builder()
+                .title("수정전제목")
+                .content("수정전컨텐츠")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("수정후제목")
+                .build();
+        //when
+        postService.edit(post.getId(),postEdit);
+        //then
+        Post changePost = postRepository.findById(post.getId()).orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        assertEquals("수정후제목",changePost.getTitle());
+    }
+
+    @Test
+    @DisplayName("글 내용 수정")
+    void test5(){
+        //given
+        Post post = Post.builder()
+                .title("수정전제목")
+                .content("수정전컨텐츠")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title(null)
+                .content("수정후컨텐츠")
+                .build();
+        //when
+        postService.edit(post.getId(),postEdit);
+        //then
+        Post changePost = postRepository.findById(post.getId()).orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        assertEquals("수정전제목",changePost.getTitle()); //null들어와도 안바뀌게
+        assertEquals("수정후컨텐츠",changePost.getContent());
+    }
+
 
 
 }

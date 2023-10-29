@@ -1,6 +1,7 @@
 package com.blog.api.controller;
 
 import com.blog.api.request.PostCreate;
+import com.blog.api.request.PostEdit;
 import com.blog.api.request.PostSearch;
 import com.blog.api.response.PostResponse;
 import com.blog.api.service.PostService;
@@ -34,5 +35,9 @@ public class PostController {
         return postService.getList(postSearch);
     }
 
+    @PatchMapping("/posts/{postId}")
+    public void edit(@PathVariable Long postId, @Valid @RequestBody PostEdit request){
+        postService.edit(postId,request);
+    }
 
 }
