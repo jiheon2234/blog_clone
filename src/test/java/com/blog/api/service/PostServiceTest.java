@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -149,6 +150,27 @@ class PostServiceTest {
         assertEquals("수정후컨텐츠",changePost.getContent());
     }
 
+
+ 
+
+    @Test
+    @Rollback(value = false)
+    @DisplayName("계시글 삭제")
+    void test6(){
+        
+        //given
+        Post post = Post.builder()
+                .title("수정전제목")
+                .content("수정전컨텐츠")
+                .build();
+        postRepository.save(post);
+
+        //when
+        postService.delete(post.getId());
+
+        //then
+        assertEquals(0, postRepository.count());
+    }
 
 
 }
