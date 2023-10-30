@@ -1,5 +1,6 @@
 package com.blog.api.service;
 
+import com.blog.api.PostNotFound;
 import com.blog.api.domain.Post;
 import com.blog.api.repository.PostRepository;
 import com.blog.api.request.PostCreate;
@@ -17,8 +18,7 @@ import org.springframework.test.annotation.Rollback;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostServiceTest {
@@ -154,7 +154,6 @@ class PostServiceTest {
  
 
     @Test
-    @Rollback(value = false)
     @DisplayName("계시글 삭제")
     void test6(){
         
@@ -171,6 +170,66 @@ class PostServiceTest {
         //then
         assertEquals(0, postRepository.count());
     }
+
+    @Test
+    @Rollback(value = false)
+    @DisplayName("계시글 조회-존재하지 않는 글")
+    void test7(){
+
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("컨텐츠")
+                .build();
+        postRepository.save(post);
+
+        //expected
+    assertThrows(PostNotFound.class, () -> {
+            postService.get(post.getId() + 1L);
+        }, "예외처리가 잘못됨");
+
+    }
+
+    @Test
+    @DisplayName("계시글 삭제- 존재하지 않는 글")
+    void test8(){
+
+            //given
+            Post post = Post.builder()
+                    .title("제목")
+                    .content("컨텐츠")
+                    .build();
+            postRepository.save(post);
+
+            //expected
+            assertThrows(PostNotFound.class, () -> {
+                postService.delete(post.getId() + 1L);
+            }, "예외처리가 잘못됨");
+
+        }
+
+        @Test
+        @DisplayName("계시글 수정 - 존재하지 않는 글")
+        void test9(){
+
+                //given
+                Post post = Post.builder()
+                        .title("제목")
+                        .content("컨텐츠")
+                        .build();
+                postRepository.save(post);
+
+            PostEdit postEdit = PostEdit.builder()
+                    .title("title")
+                    .content("content")
+                    .build();
+
+            //expected
+                assertThrows(PostNotFound.class, () -> {
+                    postService.edit(post.getId() + 1L,postEdit);
+                }, "예외처리가 잘못됨");
+
+            }
 
 
 }
