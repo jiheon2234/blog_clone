@@ -20,6 +20,8 @@ import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -126,7 +128,7 @@ class PostControllerTest {
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", post.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(post.getId()))
                 .andExpect(jsonPath("$.title").value("1234567890"))
@@ -195,7 +197,7 @@ class PostControllerTest {
                 .build();
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}",post.getId())  //PATCH /posts/{postId}
+        mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", post.getId())  //PATCH /posts/{postId}
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
                 .andExpect(status().isOk())
@@ -215,12 +217,59 @@ class PostControllerTest {
 
         //expected
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/posts/{postId}",post.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/posts/{postId}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
 
+    @Test
+    @DisplayName(" 존재하지 않는 계시글 조회")
+    void test9() throws Exception {
+
+
+        //expected
+        mockMvc.perform(delete("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName(" 존재하지 않는 계시글 조회")
+    void test10() throws Exception {
+        PostEdit postEdit = PostEdit.builder()
+                .title("title")
+                .content("content")
+                .build();
+        //expected
+        mockMvc.perform(patch("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/posts 요청시 '바보' 는 포함 불가")
+    void test11() throws Exception {
+
+        //given
+        PostCreate request = PostCreate.builder()
+                .title("바보s")
+                .content("내용입니다")
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                        .contentType(MediaType.APPLICATION_JSON) //application/json
+                        .content(json)
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+    }
 
 }

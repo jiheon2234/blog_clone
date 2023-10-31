@@ -1,6 +1,6 @@
 package com.blog.api.service;
 
-import com.blog.api.PostNotFound;
+import com.blog.api.exception.PostNotFound;
 import com.blog.api.domain.Post;
 import com.blog.api.repository.PostRepository;
 import com.blog.api.request.PostCreate;
