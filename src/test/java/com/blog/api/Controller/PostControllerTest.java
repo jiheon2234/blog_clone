@@ -44,7 +44,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 Hello World 출력")
+    @DisplayName("글 작성 요청시 Hello World 출력")
     void test() throws Exception {
         //given
         PostCreate request = PostCreate.builder()
@@ -90,7 +90,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 DB에 값이 저장")
+    @DisplayName("글 작성 요청시 DB에 값이 저장")
     void test3() throws Exception {
 
         //given
@@ -102,6 +102,7 @@ class PostControllerTest {
 
         //when
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                        .header("authorization", "jiheon")
                         .contentType(MediaType.APPLICATION_JSON) //application/json
                         .content(json)
                 )

@@ -20,29 +20,34 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")
-    public void post(@Valid @RequestBody PostCreate request  )  {
-        request.validate();
-         postService.write(request);
+    public void post(@Valid @RequestBody PostCreate request, @RequestHeader String authorization) {
+        if (authorization.equals("jiheon")) {
+            request.validate();
+            postService.write(request);
+        }
+
     }
 
 
     @GetMapping("/posts/{postId}")
-    public PostResponse get(@PathVariable(name="postId") Long id){
+    public PostResponse get(@PathVariable(name = "postId") Long id) {
         return postService.get(id);
     }
 
     @GetMapping("/posts")
-    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch){
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
         return postService.getList(postSearch);
     }
 
     @PatchMapping("/posts/{postId}")
-    public void edit(@PathVariable Long postId, @Valid @RequestBody PostEdit request){
-        postService.edit(postId,request);
+    public void edit(@PathVariable Long postId, @Valid @RequestBody PostEdit request, @RequestHeader String authorization) {
+        if (authorization.equals("jiheon")) {
+            postService.edit(postId, request);
+        }
     }
 
     @DeleteMapping("/posts/{postId}")
-    public void delete(@PathVariable Long postId){
+    public void delete(@PathVariable Long postId) {
         postService.delete(postId);
     }
 

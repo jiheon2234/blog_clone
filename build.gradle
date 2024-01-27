@@ -80,4 +80,7 @@ bootJar {
 //	}
 }
 
+jar{
+	enabled=false;
+}
 
