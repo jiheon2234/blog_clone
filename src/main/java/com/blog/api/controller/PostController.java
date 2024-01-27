@@ -1,5 +1,6 @@
 package com.blog.api.controller;
 
+import com.blog.api.config.data.UserSession;
 import com.blog.api.request.PostCreate;
 import com.blog.api.request.PostEdit;
 import com.blog.api.request.PostSearch;
@@ -19,15 +20,19 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/test")
-    public String test(){
-        return "hello";
-    }
 
     @GetMapping("/foo")
-    public String foo(){
+    public String foo(UserSession userSession) {
+        log.info(">>>{}", userSession.name);
         return "foo";
     }
+
+    @GetMapping("/bar")
+    public String bar() {
+
+        return "인증이 필요없는 bar";
+    }
+
 
     @PostMapping("/posts")
     public void post(@Valid @RequestBody PostCreate request, @RequestHeader String authorization) {
@@ -35,8 +40,8 @@ public class PostController {
             request.validate();
             postService.write(request);
         }
-
     }
+
 
 
     @GetMapping("/posts/{postId}")
