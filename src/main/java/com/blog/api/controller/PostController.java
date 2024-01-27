@@ -23,7 +23,7 @@ public class PostController {
 
     @GetMapping("/foo")
     public String foo(UserSession userSession) {
-        log.info(">>>{}", userSession.name);
+        log.info(">>>{}", userSession.id);
         return "foo";
     }
 
