@@ -1,26 +1,54 @@
 package com.blog.api.domain;
 
-import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import static lombok.AccessLevel.PROTECTED;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Entity
+@Entity @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "Users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String name;
+	private String name;
 
-    private String email;
+	private String email;
 
-    private String password;
+	private String password;
 
-    private LocalDateTime createdAt;
+	private LocalDateTime createdAt;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<Session> sessions = new ArrayList<>();
+
+	@Builder
+	public User(String name, String email, String password) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.createdAt = LocalDateTime.now();
+	}
+
+	public Session addSession() {
+		Session session = Session.builder()
+			.user(this).build();
+		this.sessions.add(session);
+		return session;
+	}
 }
