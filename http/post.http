@@ -7,3 +7,8 @@ Content-Type: application/json
   "email": "abcd@abcd.com",
   "password" : "abcd@abcd.com"
 }
+
+### 인증페이지 요청
+GET http://localhost:8080/foo
+Content-Type: application/json
+Cookie: SESSION=226877fe-bb7d-4193-8428-0473fb23a711
