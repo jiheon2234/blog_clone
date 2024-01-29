@@ -52,6 +52,7 @@ dependencies {
 
 //	implementation('com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0') // 로그 남기기
 	implementation 'org.springframework.security:spring-security-crypto'
+	implementation "org.bouncycastle:bcprov-jdk15on:1.64"
 
 	//스프링독
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
