@@ -16,3 +16,5 @@ spring:
   sql:
     init-model: always;
 
+jiheon:
+  jwt-key: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaavaaaaaaaaaaaaaaaaaa"

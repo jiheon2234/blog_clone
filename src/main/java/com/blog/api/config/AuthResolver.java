@@ -14,7 +14,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
 	private final SessionRepository sessionRepository;
+	private final AppConfig appConfig;
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
@@ -36,23 +36,23 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
 
+		log.info(">>>{}", appConfig.toString());
 		String jws = webRequest.getHeader("Authorization");
 		if (jws == null || jws.isEmpty()) {
 			throw new Unauthorized();
 		}
 		try {
 			Jws<Claims> claims = Jwts.parser()
-				.verifyWith(Keys.hmacShaKeyFor(
-					Decoders.BASE64.decode("5e543e5b002425esffsfafeasfasefaewsfaes69afff816b83b677a")))
+				.verifyWith(Keys.hmacShaKeyFor(appConfig.getJwtKey()))
 				.build()
 				.parseSignedClaims(jws);
-			log.info("claims={}",claims);
+			log.info("claims={}", claims);
 			String userId = claims.getPayload().getSubject();
-			log.info("userid={}",userId);
+			log.info("userid={}", userId);
 			return new UserSession(Long.parseLong(userId));
 		} catch (JwtException e) {
 			throw new Unauthorized();
-		}catch (Exception e){
+		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new Unauthorized();
 		}
