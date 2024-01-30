@@ -1,5 +1,6 @@
 package com.blog.api.service;
 
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import com.blog.api.request.Login;
 import com.blog.api.request.Signup;
 
 import lombok.RequiredArgsConstructor;
+
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +35,12 @@ public class AuthService {
 				throw new AlreadyExistsEmailException();
 			});
 
+		SCryptPasswordEncoder encoder = new SCryptPasswordEncoder(16, 8, 1, 32, 64);
+		String encryptedPassword = encoder.encode(signup.getPassword());
+
 		var user = User.builder()
 			.name(signup.getName())
-			.password(signup.getPassword())
+			.password(encryptedPassword)
 			.email(signup.getEmail())
 			.build();
 
