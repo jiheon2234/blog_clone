@@ -1,10 +1,12 @@
 package com.blog.api.repository;
 
-import com.blog.api.domain.User;
+import java.util.Optional;
+
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Optional;
+import com.blog.api.domain.User;
 
 public interface UserRepository extends CrudRepository<User, Long> {
     Optional<User>  findByEmailAndPassword(String email, String password);
+    Optional<User> findByEmail(String email);
 }

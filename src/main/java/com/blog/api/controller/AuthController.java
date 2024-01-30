@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.blog.api.config.AppConfig;
 import com.blog.api.request.Login;
+import com.blog.api.request.Signup;
 import com.blog.api.response.SessionResponse;
 import com.blog.api.service.AuthService;
 
@@ -37,6 +38,11 @@ public class AuthController {
 
 		return new SessionResponse(jws);
 
+	}
+
+	@PostMapping("/auth/signup")
+	public void signup(@RequestBody Signup signup){
+		authService.signup(signup);
 	}
 
 }

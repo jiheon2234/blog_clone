@@ -22,6 +22,7 @@ import com.blog.api.domain.User;
 import com.blog.api.repository.SessionRepository;
 import com.blog.api.repository.UserRepository;
 import com.blog.api.request.Login;
+import com.blog.api.request.Signup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
@@ -166,6 +167,25 @@ class AuthControllerTest {
 				.header("Authorization",session.getAccessToken() + "-ㅂㄷㅈㄹㅂㅁㄷㅈㄹㅈㅁㄷㄹ;")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isUnauthorized())
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("회원가입")
+	void test6() throws Exception{
+		// //given
+
+		Signup signup = Signup.builder()
+			.password("0000")
+			.email("jiheon2234@naver.com")
+			.name("jiheon")
+			.build();
+
+		// expected
+		mockMvc.perform(MockMvcRequestBuilders.post("/auth/signup")
+				.content(objectMapper.writeValueAsString(signup))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 }
