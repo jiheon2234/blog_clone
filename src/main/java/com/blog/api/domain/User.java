@@ -13,7 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity @Getter
+@Entity
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "Users")
 public class User {
@@ -29,7 +30,6 @@ public class User {
 	private String password;
 
 	private LocalDateTime createdAt;
-
 
 	@Builder
 	public User(String name, String email, String password) {
