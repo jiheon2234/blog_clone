@@ -1,8 +1,23 @@
 package com.blog.api.crypto;
 
-public interface PasswordEncoder  {
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
-	String encrypt(String rawPassword);
+@Component
+public class PasswordEncoder {
 
-	boolean matches(String rawPassword, String encryptedPassword);
+    private static final SCryptPasswordEncoder encoder = new SCryptPasswordEncoder(
+            16,
+            8,
+            1,
+            32,
+            64);
+
+    public String encrpyt(String rawPassword) {
+        return encoder.encode(rawPassword);
+    }
+
+    public boolean matches(String rawPassword, String encrpytedPassword) {
+        return encoder.matches(rawPassword, encrpytedPassword);
+    }
 }

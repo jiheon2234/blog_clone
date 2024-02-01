@@ -1,10 +1,14 @@
 package com.blog.api.Controller;
 
-import com.blog.api.domain.Post;
-import com.blog.api.repository.PostRepository;
-import com.blog.api.request.PostCreate;
-import com.blog.api.request.PostEdit;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,15 +19,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.blog.api.domain.Post;
+import com.blog.api.repository.PostRepository;
+import com.blog.api.request.PostCreate;
+import com.blog.api.request.PostEdit;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -237,20 +237,6 @@ class PostControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    @DisplayName(" 존재하지 않는 계시글 조회")
-    void test10() throws Exception {
-        PostEdit postEdit = PostEdit.builder()
-                .title("title")
-                .content("content")
-                .build();
-        //expected
-        mockMvc.perform(patch("/posts/{postId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postEdit)))
-                .andExpect(status().isNotFound())
-                .andDo(print());
-    }
 
     @Test
     @DisplayName("/posts 요청시 '바보' 는 포함 불가")

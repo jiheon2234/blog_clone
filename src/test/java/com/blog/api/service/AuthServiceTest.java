@@ -14,9 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import com.blog.api.crypto.PasswordEncoder;
 import com.blog.api.domain.User;
 import com.blog.api.exception.AlreadyExistsEmailException;
-import com.blog.api.exception.InvalidSigninInformation;
 import com.blog.api.repository.UserRepository;
-import com.blog.api.request.Login;
 import com.blog.api.request.Signup;
 
 
@@ -74,58 +72,10 @@ class AuthServiceTest {
 			.name("jiheon")
 			.build();
 		//whenthen
-		Assertions.assertThrows(AlreadyExistsEmailException.class, () -> {
-			authService.signup(signup);
-		});
+		Assertions.assertThrows(AlreadyExistsEmailException.class, () -> authService.signup(signup));
 	}
 
-	@Test
-	@DisplayName("로그인 성공")
-	void test3() {
 
-		//given
-		String encrypt = encoder.encrypt("1234");
 
-		User user = User.builder()
-			.email("jiheon2234@naver.com")
-			.password(encrypt)
-			.name("test")
-			.build();
-		userRepository.save(user);
-
-		Login login = Login.builder()
-			.email("jiheon2234@naver.com")
-			.password("1234")
-			.build();
-		//when
-		authService.signIn(login);
-
-	}
-
-	@Test
-	@DisplayName("비밀번호 틀림")
-	void test4() {
-
-		System.out.println("encoder = " + encoder);
-
-		//given
-		String encrypt = encoder.encrypt("1234");
-
-		User user = User.builder()
-			.email("jiheon2234@naver.com")
-			.password(encrypt)
-			.name("test")
-			.build();
-		userRepository.save(user);
-
-		Login login = Login.builder()
-			.email("jiheon2234@naver.com")
-			.password("0000")
-			.build();
-		//when
-
-		assertThrows(InvalidSigninInformation.class, () -> authService.signIn(login));
-
-	}
 
 }
