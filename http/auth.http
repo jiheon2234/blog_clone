@@ -1,12 +1,10 @@
 ### 테스트 요쳥
 
 POST http://localhost:8080/auth/login
-Content-Type: application/json
+Content-Type:  application/x-www-form-urlencoded
 
-{
-  "email": "abcd@abcd.com",
-  "password" : "abcd@abcd.com"
-}
+username = jiheon &
+password = 2234
 
 ### 인증페이지 요청
 GET http://localhost:8080/foo

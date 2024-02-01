@@ -1,6 +1,5 @@
 package com.blog.api.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +19,7 @@ public class AuthController {
 	private final AuthService authService;
 	private final AppConfig appConfig;
 
-	@GetMapping("/auth/login")
+	@PostMapping("/auth/login")
 	public String login() {
 		return "로그인 페이지입니다";
 	}

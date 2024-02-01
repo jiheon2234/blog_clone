@@ -9,6 +9,12 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -28,10 +34,31 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http.csrf(AbstractHttpConfigurer::disable)
+		http.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(
 				(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
 					.requestMatchers(antMatcher("/auth/login")).permitAll()
-					.anyRequest().authenticated())).build();
+					.anyRequest().authenticated()))
+			.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.loginPage("/auth/login")
+				.loginProcessingUrl("/auth/login")
+				.defaultSuccessUrl("/"))
+			.userDetailsService(userDetailsService());
+		return http.build();
+	}
+
+	@Bean
+	public UserDetailsService userDetailsService() {
+		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+		UserDetails user = User.withUsername("jiheon").password("2234").roles("ADMIN").build();
+		manager.createUser(user);
+		return manager;
+	}
+
+	@Bean
+	public PasswordEncoder encoder() {
+		return NoOpPasswordEncoder.getInstance();
 	}
 }
