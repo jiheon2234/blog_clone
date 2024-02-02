@@ -4,18 +4,21 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.blog.api.domain.User;
+import com.blog.api.repository.UserRepository;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -37,7 +40,7 @@ public class SecurityConfig {
 		http.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(
 				(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-					.requestMatchers(antMatcher("/auth/login")).permitAll()
+					.requestMatchers(antMatcher("/auth/login"), antMatcher(HttpMethod.POST, "/auth/signup")).permitAll()
 					.anyRequest().authenticated()))
 			.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
 				.usernameParameter("username")
@@ -45,7 +48,6 @@ public class SecurityConfig {
 				.loginPage("/auth/login")
 				.loginProcessingUrl("/auth/login")
 				.defaultSuccessUrl("/"))
-			.userDetailsService(userDetailsService())
 			.rememberMe(rm -> rm.rememberMeParameter("remember")
 				.alwaysRemember(false)
 				.tokenValiditySeconds(2592000));
@@ -53,15 +55,24 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService() {
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		UserDetails user = User.withUsername("jiheon").password("2234").roles("ADMIN").build();
-		manager.createUser(user);
-		return manager;
+	public UserDetailsService userDetailsService(UserRepository userRepository) {
+		return new UserDetailsService() {
+			@Override
+			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+				User user = userRepository.findByEmail(username)
+					.orElseThrow(() -> new UsernameNotFoundException(username + "을 찾을 수 없습니다"));
+				return new UserPrincipal(user);
+			}
+		};
 	}
 
 	@Bean
 	public PasswordEncoder encoder() {
-		return NoOpPasswordEncoder.getInstance();
+		return new SCryptPasswordEncoder(
+			16,
+			8,
+			1,
+			32,
+			64);
 	}
 }

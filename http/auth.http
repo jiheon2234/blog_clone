@@ -1,11 +1,22 @@
 ### 테스트 요쳥
 
-POST http://localhost:8080/auth/login
-Content-Type:  application/x-www-form-urlencoded
+## 회원가입
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
 
-username = jiheon &
-password = 2234 &
-remember = 1
+{
+  "name": "jiheon",
+  "email": "aaaa@aaaa.com",
+  "password": "aaaa@aaaa.com"
+}
+
+### 로그인
+
+POST http://localhost:8080/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username = aaaa@aaaa.com &
+password = aaaa@aaaa.com
 
 ### 메인 페이지
 GET http://localhost:8080
