@@ -14,7 +14,16 @@ spring:
   jpa:
     defer-datasource-initialization: true
   sql:
-    init-model: always;
+    init:
+      mode: always
 
+  session:
+    timeout: 86400
 jiheon:
   jwt-key: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaavaaaaaaaaaaaaaaaaaa"
+  
+server:
+  servlet:
+    session:
+      cookie:
+        max-age: 172800
