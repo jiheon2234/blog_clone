@@ -4,7 +4,6 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import com.blog.api.domain.User;
 import com.blog.api.repository.UserRepository;
@@ -40,7 +40,9 @@ public class SecurityConfig {
 		http.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(
 				(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-					.requestMatchers(antMatcher("/auth/login"), antMatcher(HttpMethod.POST, "/auth/signup")).permitAll()
+					.requestMatchers(antMatcher("/auth/login"), antMatcher("/auth/signup")).permitAll()
+					.requestMatchers(antMatcher("/admin")).
+					access(new WebExpressionAuthorizationManager("hasRole('ADMIN') and hasAuthority('WRITE')"))
 					.anyRequest().authenticated()))
 			.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
 				.usernameParameter("username")
