@@ -14,9 +14,10 @@ public class UserPrincipal extends User {
 	private final Long userId;
 
 	public UserPrincipal(com.blog.api.domain.User user) {
-		super(user.getEmail(), user.getPassword(), List.of(
-			new SimpleGrantedAuthority("ROLE_ADMIN"),
-			new SimpleGrantedAuthority("WRITE")));
+		super(user.getEmail(), user.getPassword(),
+			List.of(
+				new SimpleGrantedAuthority("ROLE_USER")
+			));
 		this.userId = user.getId();
 	}
 

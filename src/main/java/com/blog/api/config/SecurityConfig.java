@@ -15,14 +15,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
+import com.blog.api.config.handler.Http401Handler;
+import com.blog.api.config.handler.Http403Handler;
+import com.blog.api.config.handler.LoginFailHandler;
 import com.blog.api.domain.User;
 import com.blog.api.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity(debug = true)
+@Slf4j
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final ObjectMapper objectMapper;
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
@@ -41,15 +51,21 @@ public class SecurityConfig {
 			.authorizeHttpRequests(
 				(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
 					.requestMatchers(antMatcher("/auth/login"), antMatcher("/auth/signup")).permitAll()
-					.requestMatchers(antMatcher("/admin")).
-					access(new WebExpressionAuthorizationManager("hasRole('ADMIN') and hasAuthority('WRITE')"))
+					.requestMatchers(antMatcher("/user")).hasRole("USER")
+					.requestMatchers(antMatcher("/admin")).hasRole("ADMIN")
 					.anyRequest().authenticated()))
 			.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.loginPage("/auth/login")
 				.loginProcessingUrl("/auth/login")
-				.defaultSuccessUrl("/"))
+				.defaultSuccessUrl("/")
+				.failureHandler(new LoginFailHandler(objectMapper))
+			)
+			.exceptionHandling(e -> {
+				e.accessDeniedHandler(new Http403Handler(objectMapper));
+				e.authenticationEntryPoint(new Http401Handler(objectMapper));
+			})
 			.rememberMe(rm -> rm.rememberMeParameter("remember")
 				.alwaysRemember(false)
 				.tokenValiditySeconds(2592000));
