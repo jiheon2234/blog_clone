@@ -1,8 +1,8 @@
 package com.blog.api.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.blog.api.crypto.PasswordEncoder;
 import com.blog.api.domain.User;
 import com.blog.api.exception.AlreadyExistsEmailException;
 import com.blog.api.repository.UserRepository;
@@ -18,15 +18,13 @@ public class AuthService {
 
 	private final PasswordEncoder encoder;
 
-
-
 	public void signup(Signup signup) {
 		userRepository.findByEmail(signup.getEmail())
 			.ifPresent(u -> {
 				throw new AlreadyExistsEmailException();
 			});
 
-		String encryptedPassword = encoder.encrpyt(signup.getPassword());
+		String encryptedPassword = encoder.encode(signup.getPassword());
 
 		var user = User.builder()
 			.name(signup.getName())
