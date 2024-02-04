@@ -23,10 +23,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.blog.api.config.MyMockUser;
 import com.blog.api.domain.Post;
 import com.blog.api.domain.User;
-import com.blog.api.repository.PostRepository;
 import com.blog.api.repository.UserRepository;
-import com.blog.api.request.PostCreate;
-import com.blog.api.request.PostEdit;
+import com.blog.api.repository.post.PostRepository;
+import com.blog.api.request.post.PostCreate;
+import com.blog.api.request.post.PostEdit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blog.api.config.UserPrincipal;
-import com.blog.api.request.PostCreate;
-import com.blog.api.request.PostEdit;
-import com.blog.api.request.PostSearch;
+import com.blog.api.request.post.PostCreate;
+import com.blog.api.request.post.PostEdit;
+import com.blog.api.request.post.PostSearch;
 import com.blog.api.response.PostResponse;
 import com.blog.api.service.PostService;
 

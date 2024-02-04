@@ -2,6 +2,10 @@ package com.blog.api.domain;
 
 import static jakarta.persistence.GenerationType.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +33,9 @@ public class Post {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn
 	private User user;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
+	private List<Comment> comments = new ArrayList<>();
 
 	@Builder
 	public Post(String title, String content, User user) {
@@ -54,5 +62,10 @@ public class Post {
 
 	public Long getUserId() {
 		return this.user.getId();
+	}
+
+	public void addComment(Comment comment) {
+		comment.setPost(this);
+		this.comments.add(comment);
 	}
 }

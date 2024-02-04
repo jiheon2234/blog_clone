@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import com.blog.api.config.UserPrincipal;
 import com.blog.api.domain.Post;
 import com.blog.api.exception.PostNotFound;
-import com.blog.api.repository.PostRepository;
+import com.blog.api.repository.post.PostRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

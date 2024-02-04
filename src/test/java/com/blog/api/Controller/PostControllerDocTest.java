@@ -22,9 +22,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.blog.api.domain.Post;
-import com.blog.api.repository.PostRepository;
 import com.blog.api.repository.UserRepository;
-import com.blog.api.request.PostCreate;
+import com.blog.api.repository.post.PostRepository;
+import com.blog.api.request.post.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest

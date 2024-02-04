@@ -16,11 +16,11 @@ import org.springframework.test.annotation.Rollback;
 import com.blog.api.domain.Post;
 import com.blog.api.domain.User;
 import com.blog.api.exception.PostNotFound;
-import com.blog.api.repository.PostRepository;
 import com.blog.api.repository.UserRepository;
-import com.blog.api.request.PostCreate;
-import com.blog.api.request.PostEdit;
-import com.blog.api.request.PostSearch;
+import com.blog.api.repository.post.PostRepository;
+import com.blog.api.request.post.PostCreate;
+import com.blog.api.request.post.PostEdit;
+import com.blog.api.request.post.PostSearch;
 import com.blog.api.response.PostResponse;
 
 @SpringBootTest
