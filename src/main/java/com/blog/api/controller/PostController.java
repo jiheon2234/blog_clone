@@ -2,6 +2,7 @@ package com.blog.api.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,38 +27,34 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final PostService postService;
+	private final PostService postService;
 
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/posts")
+	public void post(@Valid @RequestBody PostCreate request) {
+		request.validate();
+		postService.write(request);
+	}
 
+	@GetMapping("/posts/{postId}")
+	public PostResponse get(@PathVariable(name = "postId") Long id) {
+		return postService.get(id);
+	}
 
+	@GetMapping("/posts")
+	public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
+		return postService.getList(postSearch);
+	}
 
-    @PostMapping("/posts")
-    public void post(@Valid @RequestBody PostCreate request) {
-        request.validate();
-        postService.write(request);
-    }
+	@PatchMapping("/posts/{postId}")
+	public void edit(@PathVariable Long postId, @Valid @RequestBody PostEdit request) {
+		postService.edit(postId, request);
+	}
 
-
-
-    @GetMapping("/posts/{postId}")
-    public PostResponse get(@PathVariable(name = "postId") Long id) {
-        return postService.get(id);
-    }
-
-    @GetMapping("/posts")
-    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
-        return postService.getList(postSearch);
-    }
-
-    @PatchMapping("/posts/{postId}")
-    public void edit(@PathVariable Long postId, @Valid @RequestBody PostEdit request) {
-            postService.edit(postId, request);
-    }
-
-    @DeleteMapping("/posts/{postId}")
-    public void delete(@PathVariable Long postId) {
-        postService.delete(postId);
-    }
-
+	@PreAuthorize("hasRole('ADMIN')")
+	@DeleteMapping("/posts/{postId}")
+	public void delete(@PathVariable Long postId) {
+		postService.delete(postId);
+	}
 
 }

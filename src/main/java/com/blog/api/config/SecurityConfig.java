@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,7 +19,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
@@ -27,6 +27,7 @@ import com.blog.api.config.filter.EmailPasswordAuthFilter;
 import com.blog.api.config.handler.Http401Handler;
 import com.blog.api.config.handler.Http403Handler;
 import com.blog.api.config.handler.LoginFailHandler;
+import com.blog.api.config.handler.LoginSuccessHandler;
 import com.blog.api.domain.User;
 import com.blog.api.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebSecurity(debug = true)
 @Slf4j
 @RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
 	private final ObjectMapper objectMapper;
@@ -60,8 +62,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(
 				(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
 					.requestMatchers(antMatcher("/auth/login"), antMatcher("/auth/signup")).permitAll()
-					.requestMatchers(antMatcher("/user")).hasRole("USER")
-					.requestMatchers(antMatcher("/admin")).hasRole("ADMIN")
+					// .requestMatchers(antMatcher("/user")).hasRole("USER")
+					// .requestMatchers(antMatcher("/admin")).hasRole("ADMIN")
 					.anyRequest().authenticated()))
 			.addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 			// .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
@@ -94,7 +96,7 @@ public class SecurityConfig {
 	public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
 		EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
 		filter.setAuthenticationManager(authenticationManager());
-		filter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
+		filter.setAuthenticationSuccessHandler(new LoginSuccessHandler(objectMapper));
 		filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
 		filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
 
