@@ -64,7 +64,7 @@ public class SecurityConfig {
 					.requestMatchers(antMatcher("/auth/login"), antMatcher("/auth/signup")).permitAll()
 					// .requestMatchers(antMatcher("/user")).hasRole("USER")
 					// .requestMatchers(antMatcher("/admin")).hasRole("ADMIN")
-					.anyRequest().authenticated()))
+					.anyRequest().permitAll()))
 			.addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 			// .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
 			// 	.usernameParameter("username")

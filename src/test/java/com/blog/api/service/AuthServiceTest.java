@@ -9,14 +9,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.blog.api.crypto.PasswordEncoder;
 import com.blog.api.domain.User;
 import com.blog.api.exception.AlreadyExistsEmailException;
 import com.blog.api.repository.UserRepository;
 import com.blog.api.request.Signup;
-
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -74,8 +73,5 @@ class AuthServiceTest {
 		//whenthen
 		Assertions.assertThrows(AlreadyExistsEmailException.class, () -> authService.signup(signup));
 	}
-
-
-
 
 }

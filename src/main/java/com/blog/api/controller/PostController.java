@@ -3,6 +3,7 @@ package com.blog.api.controller;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.api.config.UserPrincipal;
 import com.blog.api.request.PostCreate;
 import com.blog.api.request.PostEdit;
 import com.blog.api.request.PostSearch;
@@ -31,9 +33,9 @@ public class PostController {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/posts")
-	public void post(@Valid @RequestBody PostCreate request) {
+	public void post(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody PostCreate request) {
 		request.validate();
-		postService.write(request);
+		postService.write(userPrincipal.getUserId(), request);
 	}
 
 	@GetMapping("/posts/{postId}")
@@ -51,7 +53,7 @@ public class PostController {
 		postService.edit(postId, request);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') && hasPermission(#postId, 'POST','DELETE')")
 	@DeleteMapping("/posts/{postId}")
 	public void delete(@PathVariable Long postId) {
 		postService.delete(postId);
